@@ -6,6 +6,10 @@ include(qt.cmake)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOUIC_SEARCH_PATHS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui
+)
+
 if(WIN32)
     # Windows - ajusta según tu instalación
     if(EXISTS "C:/Qt/6.9.3/msvc2022_64")
@@ -36,10 +40,10 @@ find_package(Qt${QT_VERSION_MAJOR}
 qt_standard_project_setup()
 
 set(PROJECT_SOURCES
-    main.cpp
-    proyectoL.ui
-    proyectoL.h
-    proyectoL.cpp
+    src/main.cpp
+    src/proyectoL.cpp
+    gui/proyectoL.ui
+    headers/proyectoL.h
 )
 
 if(WIN32)
@@ -57,6 +61,13 @@ target_link_libraries(proyectoL PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+)
+
+target_include_directories(proyectoL PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}/gui
 )
 
 # ==========================================================

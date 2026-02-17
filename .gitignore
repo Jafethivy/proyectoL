@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Qt Creator (C++ IDE) auto-generated files
+.qtCreator/
+/proyectoL/build/Desktop_Qt_6_9_3_MSVC2022_64bit-Debug
