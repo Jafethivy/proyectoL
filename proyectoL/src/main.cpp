@@ -1,4 +1,4 @@
-#include "proyectoL.h"
+#include "view/proyectoL.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
