@@ -157,26 +157,46 @@ endif()
 # ==========================================================
 # FUENTES DEL PROYECTO
 # ==========================================================
+set(MODELS_UTILS
+    src/models/utils/argon2id.h
+    src/models/utils/argon2id.cpp
+    src/models/utils/db.h
+    src/models/utils/db.cpp
+)
+
+set (MODELS
+    src/models/modelsfactory.h
+    src/models/modelsfactory.cpp
+
+    src/models/Login/auth.h
+    src/models/Login/auth.cpp
+)
+
+set (CONTROLLERS
+    src/controllers/LoginController/controller.h
+    src/controllers/LoginController/controller.cpp
+)
+
+set (VIEW_SOURCES
+    gui/proyectoL.ui
+    src/view/Login/proyectoL.h
+    src/view/Login/proyectoL.cpp
+
+)
+
+set (SOURCE_INIT
+    src/main.cpp
+
+    src/AppContext.h
+    src/AppContext.cpp
+)
 
 set(PROJECT_SOURCES
-    # Models (lógica de negocio)
-    src/models/argon2id.h
-    src/models/argon2id.cpp
-    src/models/db.h
-    src/models/db.cpp
-    
-    # Controllers (orquestación)
-    src/controllers/controller.h
-    src/controllers/controller.cpp
-    
-    # View (interfaz gráfica)
-    src/view/proyectoL.h
-    src/view/proyectoL.cpp
-    # UI
-    gui/proyectoL.ui
-
-    # Entry point
-    src/main.cpp
+    ${MODELS_UTILS}
+    ${MODELS}
+    ${CONTROLLERS}
+    ${VIEW_SOURCES}
+    ${SOURCE_INIT}
 )
 
 if(WIN32)
@@ -209,7 +229,6 @@ target_link_libraries(proyectoL PRIVATE
 target_include_directories(proyectoL PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/gui
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-
     ${CMAKE_CURRENT_BINARY_DIR}/gui
     ${MYSQL_INCLUDE_DIRS}
 )

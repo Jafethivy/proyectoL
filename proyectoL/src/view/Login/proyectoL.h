@@ -2,10 +2,6 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_proyectoL.h"
-#include <qpushbutton>
-#include <qthread>
-
-#include <controllers/controller.h>
 
 class proyectoL : public QMainWindow
 {
@@ -15,7 +11,11 @@ public:
     proyectoL(QWidget *parent = nullptr);
     ~proyectoL();
 
-    void on_button_clicked();
+public slots:
+	void on_login_b_clicked();
+
+signals:
+	void LoginAttempt(const QString& username, const QString& password);
 
 private:
     Ui::proyectoLClass ui;

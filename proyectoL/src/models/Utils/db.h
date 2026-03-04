@@ -14,10 +14,13 @@ class DB : public QObject
 public:
 	explicit DB(QObject* parent = nullptr);
 
+	void debug();
+
 public slots:
-	void connectToDatabase();
-	void Login(const QString& user_id, const QString& password);
+	Session* connectToDatabase();
 
 signals:
 
+private:
+	Session* sess = nullptr;
 };

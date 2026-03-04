@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>421</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,8 @@
    <widget class="QLineEdit" name="user_in">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>40</y>
+      <x>90</x>
+      <y>150</y>
       <width>241</width>
       <height>41</height>
      </rect>
@@ -34,8 +34,8 @@ color: #000000</string>
    <widget class="QLineEdit" name="pwd_in">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>120</y>
+      <x>90</x>
+      <y>240</y>
       <width>241</width>
       <height>41</height>
      </rect>
@@ -48,10 +48,10 @@ color: #000000</string>
    <widget class="QPushButton" name="login_b">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>220</y>
-      <width>80</width>
-      <height>24</height>
+      <x>150</x>
+      <y>330</y>
+      <width>121</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -59,7 +59,7 @@ color: #000000</string>
 color: #000000</string>
     </property>
     <property name="text">
-     <string>Dale</string>
+     <string>Ingresar</string>
     </property>
    </widget>
   </widget>
