@@ -1,10 +1,14 @@
-#include "view/proyectoL.h"
 #include <QtWidgets/QApplication>
+#include "AppContext.h"
+#include "view/proyectoL.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    proyectoL window;
-    window.show();
+
+    AppContext context;
+	auto* window = context.initialize();
+
+    window->show();
     return app.exec();
 }

@@ -37,15 +37,6 @@ if(WIN32)
     else()
         message(WARNING "MySQL Connector C++ 9.6 not found. Please set MYSQL_CONNECTOR_PATH manually.")
     endif()
-    
-elseif(UNIX AND NOT APPLE)
-    if(EXISTS "/usr/include/mysql-cppconn-9")
-        set(MYSQL_CONNECTOR_PATH "/usr" CACHE PATH "MySQL Connector C++ path")
-    elseif(EXISTS "/usr/local/mysql-connector-c++-9.6")
-        set(MYSQL_CONNECTOR_PATH "/usr/local/mysql-connector-c++-9.6" CACHE PATH "MySQL Connector C++ path")
-    else()
-        message(WARNING "MySQL Connector C++ not found. Install libmysqlcppconn-dev or set MYSQL_CONNECTOR_PATH.")
-    endif()
 endif()
 
 # ==========================================================
@@ -57,14 +48,6 @@ if(WIN32)
         set(CMAKE_PREFIX_PATH "C:/Qt/6.9.3/msvc2022_64" CACHE PATH "Qt installation path")
     elseif(EXISTS "D:/Qt/6.9.3/msvc2022_64")
         set(CMAKE_PREFIX_PATH "D:/Qt/6.9.3/msvc2022_64" CACHE PATH "Qt installation path")
-    else()
-        message(WARNING "Qt not found in standard locations. Please set CMAKE_PREFIX_PATH manually.")
-    endif()
-elseif(UNIX AND NOT APPLE)
-    if(EXISTS "$ENV{HOME}/Qt/6.9.3/gcc_64")
-        set(CMAKE_PREFIX_PATH "$ENV{HOME}/Qt/6.9.3/gcc_64" CACHE PATH "Qt installation path")
-    elseif(EXISTS "/opt/Qt/6.9.3/gcc_64")
-        set(CMAKE_PREFIX_PATH "/opt/Qt/6.9.3/gcc_64" CACHE PATH "Qt installation path")
     else()
         message(WARNING "Qt not found in standard locations. Please set CMAKE_PREFIX_PATH manually.")
     endif()
@@ -80,6 +63,8 @@ find_package(Qt${QT_VERSION_MAJOR}
         Core
         Gui
         Widgets
+        Quick
+        QuickWidgets
 )
 qt_standard_project_setup()
 
@@ -131,61 +116,92 @@ if(WIN32)
     set(MYSQL_DLL_DIR "${MYSQL_CONNECTOR_PATH}/lib64")
     
     message(STATUS "MySQL DLL Dir: ${MYSQL_DLL_DIR}")
-    
-else()
-    # Linux
-    find_package(mysql-concpp QUIET)
-    
-    if(mysql-concpp_FOUND)
-        set(MYSQL_LIBRARIES mysql::concpp)
-    else()
-        find_package(PkgConfig QUIET)
-        if(PkgConfig_FOUND)
-            pkg_check_modules(MYSQL_CPPconn mysqlcppconn)
-        endif()
-        
-        if(NOT MYSQL_CPPconn_FOUND)
-            set(MYSQL_INCLUDE_DIRS "/usr/include/mysql-cppconn-9")
-            set(MYSQL_LIBRARIES 
-                "/usr/lib/x86_64-linux-gnu/libmysqlcppconn.so"
-                "/usr/lib/x86_64-linux-gnu/libmysqlcppconnx.so"
-            )
-        endif()
-    endif()
 endif()
 
 # ==========================================================
 # FUENTES DEL PROYECTO
 # ==========================================================
+set(MODELS_UTILS
+    src/models/utils/argon2id.h
+    src/models/utils/argon2id.cpp
 
-set(PROJECT_SOURCES
-    # Models (lógica de negocio)
-    src/models/argon2id.h
-    src/models/argon2id.cpp
-    src/models/db.h
-    src/models/db.cpp
-    
-    # Controllers (orquestación)
-    src/controllers/controller.h
-    src/controllers/controller.cpp
-    
-    # View (interfaz gráfica)
+    src/models/utils/db.h
+    src/models/utils/db.cpp
+)
+
+set (MODELS
+    src/models/modelsfactory.h
+    src/models/modelsfactory.cpp
+
+    src/models/Login/auth.h
+    src/models/Login/auth.cpp
+)
+
+set (CONTROLLERS
+    src/controllers/LoginController/controller.h
+    src/controllers/LoginController/controller.cpp
+
+    src/controllers/ReceptionController/reception_controller.h
+    src/controllers/ReceptionController/reception_controller.cpp
+)
+
+set (VIEW_SOURCES
+    gui/utils/error.ui
+
+    #Main WIndow
+    gui/proyectoL.ui
     src/view/proyectoL.h
     src/view/proyectoL.cpp
-    # UI
-    gui/proyectoL.ui
 
-    # Entry point
+    #Login
+    gui/login/Login.ui
+    src/view/login/Login.h
+    src/view/login/Login.cpp
+
+
+    #Recepcion
+    gui/reception/reception.ui
+    src/view/reception/reception.h
+    src/view/reception/reception.cpp
+
+)
+
+set (QRC_FILES
+    resources.qrc
+)
+
+set (QML_FILES
+    qml/reception/reservations.qml
+    qml/reception/reception.qml
+    qml/reception/config.qml
+    qml/reception/tables.qml
+)
+
+set (QML_LOGIC
+    src/models/reception/reservations/Reservations.h
+    src/models/reception/reservations/Reservations.cpp
+)
+
+set (SOURCE_INIT
     src/main.cpp
+
+    src/AppContext.h
+    src/AppContext.cpp
+)
+
+set(PROJECT_SOURCES
+    ${MODELS_UTILS}
+    ${MODELS}
+    ${CONTROLLERS}
+    ${VIEW_SOURCES}
+    ${QRC_FILES}
+    ${QML_LOGIC}
+    ${SOURCE_INIT}
 )
 
 if(WIN32)
     qt_add_executable(proyectoL
         WIN32
-        ${PROJECT_SOURCES}
-    )
-else()
-    qt_add_executable(proyectoL
         ${PROJECT_SOURCES}
     )
 endif()
@@ -195,22 +211,33 @@ endif()
 # ==========================================================
 
 target_link_libraries(proyectoL PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+    Qt::Quick
+    Qt::QuickWidgets
     ${MYSQL_LIBRARIES}
-    $
 )
 
 # ==========================================================
 # DIRECTORIOS DE INCLUDES
 # ==========================================================
 
-target_include_directories(proyectoL PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+target_include_directories(proyectoL PRIVATE
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui
     ${CMAKE_CURRENT_BINARY_DIR}/gui
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils
+    ${CMAKE_CURRENT_BINARY_DIR}/gui/utils
+    
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/login
+    ${CMAKE_CURRENT_BINARY_DIR}/gui/login
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/reception
+    ${CMAKE_CURRENT_BINARY_DIR}/gui/reception
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${MYSQL_INCLUDE_DIRS}
 )
 
@@ -265,53 +292,7 @@ if(WIN32)
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
             COMMENT "Copiando libsodium.dll..."
         )
-    endif()
-
-else()
-    # =========================================================
-    # LINUX / UNIX - libsodium vía pkg-config o sistema
-    # =========================================================
-    
-    # Buscar usando pkg-config (método estándar en Linux)
-    find_package(PkgConfig QUIET)
-    
-    if(PkgConfig_FOUND)
-        pkg_check_modules(SODIUM QUIET libsodium)
-        
-        if(SODIUM_FOUND)
-            # Usar configuración de pkg-config
-            target_include_directories(tu_app PRIVATE ${SODIUM_INCLUDE_DIRS})
-            target_link_libraries(tu_app PRIVATE ${SODIUM_LIBRARIES})
-            target_compile_options(tu_app PRIVATE ${SODIUM_CFLAGS_OTHER})
-            
-            message(STATUS "libsodium encontrado vía pkg-config")
-        endif()
-    endif()
-    
-    # Si no se encontró vía pkg-config, buscar manualmente
-    if(NOT SODIUM_FOUND)
-        find_path(SODIUM_INCLUDE_DIR 
-            NAMES sodium.h 
-            PATHS /usr/include /usr/local/include
-            REQUIRED
-        )
-        
-        find_library(SODIUM_LIBRARY 
-            NAMES sodium libsodium 
-            PATHS /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
-            REQUIRED
-        )
-        
-        target_include_directories(tu_app PRIVATE ${SODIUM_INCLUDE_DIR})
-        target_link_libraries(tu_app PRIVATE ${SODIUM_LIBRARY})
-        
-        message(STATUS "libsodium encontrado manualmente")
-    endif()
-    
-    # En Linux, vincular pthread y posiblemente rt (requerido por libsodium)
-    find_package(Threads REQUIRED)
-    target_link_libraries(tu_app PRIVATE Threads::Threads)
-    
+    endif()    
 endif()
 
 # ==========================================================
@@ -333,6 +314,7 @@ if(WIN32)
                 --verbose 0
                 --no-translations
                 --no-compiler-runtime
+                --qmldir "${CMAKE_CURRENT_SOURCE_DIR}"
                 \"$<TARGET_FILE:proyectoL>\"
             COMMENT "Deploying Qt dependencies with windeployqt..."
         )
@@ -396,15 +378,3 @@ if(WIN32)
         WIN32_EXECUTABLE TRUE
     )
 endif()
-
-if(APPLE)
-    set_target_properties(proyectoL PROPERTIES
-        MACOSX_BUNDLE TRUE
-    )
-endif()
-
-include(GNUInstallDirs)
-install(TARGETS proyectoL
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
