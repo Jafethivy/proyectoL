@@ -14,54 +14,32 @@
    <string>proyectoL</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">background-color: #dddbf1;</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLineEdit" name="user_in">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>150</y>
-      <width>241</width>
-      <height>41</height>
-     </rect>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #ffffff;
-color: #000000</string>
+    <property name="leftMargin">
+     <number>0</number>
     </property>
-   </widget>
-   <widget class="QLineEdit" name="pwd_in">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>240</y>
-      <width>241</width>
-      <height>41</height>
-     </rect>
+    <property name="topMargin">
+     <number>0</number>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #ffffff;
-color: #000000</string>
+    <property name="rightMargin">
+     <number>0</number>
     </property>
-   </widget>
-   <widget class="QPushButton" name="login_b">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>330</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
+    <property name="bottomMargin">
+     <number>0</number>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #ffffff;
-color: #000000</string>
-    </property>
-    <property name="text">
-     <string>Ingresar</string>
-    </property>
-   </widget>
+    <item>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <widget class="QWidget" name="page"/>
+      <widget class="QWidget" name="page_2"/>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

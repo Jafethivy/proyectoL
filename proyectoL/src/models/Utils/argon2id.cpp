@@ -8,7 +8,7 @@ Argon2id::Argon2id() {
 
 Argon2id::~Argon2id() {}
 
-std::string hashPassword(const std::string& password) {
+std::string Argon2id::hashPassword(const std::string& password) {
     char hashed_password[crypto_pwhash_STRBYTES];
 
     // Opciones de seguridad:
@@ -31,7 +31,7 @@ std::string hashPassword(const std::string& password) {
     return std::string(hashed_password);
 }
 
-bool verifyPassword(const std::string& password, const std::string& hash) {
+bool Argon2id::verifyPassword(const std::string& password, const std::string& hash) {
     // crypto_pwhash_str_verify extrae automáticamente los parámetros del hash
     int result = crypto_pwhash_str_verify(
         hash.c_str(),
@@ -45,7 +45,7 @@ bool verifyPassword(const std::string& password, const std::string& hash) {
     return result == 0; // 0 = éxito, -1 = fallo
 }
 
-bool needsRehash(const std::string& hash) {
+bool Argon2id::needsRehash(const std::string& hash) {
     return crypto_pwhash_str_needs_rehash(
         hash.c_str(),
         crypto_pwhash_OPSLIMIT_INTERACTIVE,

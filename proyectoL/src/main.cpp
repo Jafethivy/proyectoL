@@ -1,6 +1,6 @@
 #include <QtWidgets/QApplication>
 #include "AppContext.h"
-#include "view/Login/proyectoL.h"
+#include "view/proyectoL.h"
 
 int main(int argc, char *argv[])
 {

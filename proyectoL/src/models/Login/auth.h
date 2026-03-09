@@ -15,16 +15,27 @@ class Auth : public QObject
 public:
 	Auth(DB*model_db, QObject* parent = nullptr);
 
-	QString get_db_info();
-	std::string hashPassword(const std::string& password);
-	bool verifyPassword(const QString& password, const QString& hash);
+	void get_db_info(std::string& username);
 
-	void debug();
-	
+	bool verifyPasswordAuth(const std::string& pwd_hash_local, const std::string& pwd_hash);
+
+	void updateStatusDb(const int& status);
+	void updateStatusDb_close(const int& status);
 
 public slots:
 	void on_login_attempt(const QString& username, const QString& password);
 
+signals:
+	void LoginStatus(const QString& area, const int& status);
+	void endSession_success();
+
 private:
 	DB* m_db = nullptr;
+	Argon2id* m_argon = nullptr;
+
+	std::string pwd_hash_db;
+
+	std::string username_local;
+	QString area;
+	bool status = false;
 };
