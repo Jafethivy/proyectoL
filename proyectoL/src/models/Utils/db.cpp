@@ -66,3 +66,22 @@ void DB::updateStatusDb(const std::string& username, const int& status) {
         qDebug() << "Error updating status in DB:" << err.what();
     }
 }
+
+//reception
+void DB::createReservation(QVariantMap m_data) {
+    std::string name_resv = m_data["name_resv"].toString().toStdString();
+    int guest_resv = m_data["guest_resv"].toInt();
+    std::string date_resv = m_data["date_resv"].toString().toStdString();
+    std::string time_resv = m_data["time_resv"].toString().toStdString();
+
+    auto result = sess->sql("INSERT INTO tecnm.reservations (name_resv, guest_resv, date_resv, time_resv) VALUES (?, ?, ?, ?);")
+        .bind(name_resv, guest_resv, date_resv, time_resv)
+        .execute();
+
+    int id_resv = result.getAutoIncrementValue();
+    m_data.insert("id_resv", id_resv);
+    for (auto it = m_data.begin(); it != m_data.end(); ++it) {
+        qDebug() << "clave:" << it.key() << "valor:" << it.value();
+    }
+    emit n_ReservationCreated(m_data);
+}

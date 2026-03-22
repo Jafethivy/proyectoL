@@ -17,8 +17,7 @@ proyectoL::proyectoL(QWidget* parent)
 	ui.stackedWidget->addWidget(loginWindow);
 	ui.stackedWidget->addWidget(receptionWindow);
 
-	set_login();
-
+	set_login();	
 }
 
 proyectoL::~proyectoL()
@@ -31,19 +30,28 @@ reception* proyectoL::receptionWidget() const {
 	return receptionWindow;
 }
 
-void proyectoL::setResizableWindowSize(int w, int h) {
-	setMinimumSize(w, h);
-	resize(w, h);
+void proyectoL::screen_area() {
+	QScreen* screen = QGuiApplication::primaryScreen();
+	QRect screenGeometry = screen->availableGeometry();
+	width_screen = (screenGeometry.width() - this->width()) / 2;
+	height_screen = (screenGeometry.height() - this->height()) / 2;
+	move(screenGeometry.x() + width_screen, screenGeometry.y() + height_screen);
 }
 
 void proyectoL::set_login() {
-	setResizableWindowSize(421, 481);
-	ui.stackedWidget->setCurrentWidget(loginWindow);
+	showNormal();
+	resize(421, 481);
+	screen_area();
+	ui.stackedWidget->setCurrentIndex(0);
 }
 
 void proyectoL::set_area(const QString& area) {
-	setResizableWindowSize(781, 421);
-	ui.stackedWidget->setCurrentWidget(receptionWindow);
+	setUpdatesEnabled(false);
+	ui.stackedWidget->setCurrentIndex(1);
+	setUpdatesEnabled(true);
+	QTimer::singleShot(5, this, [this]() {
+		showMaximized();
+		});
 }
 
 void proyectoL::closeEvent(QCloseEvent* event) {

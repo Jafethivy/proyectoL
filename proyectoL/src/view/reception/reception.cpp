@@ -10,6 +10,8 @@ reception::reception(QWidget *parent)
 	create_qml_tables();
 	create_qml_reception(parent);
 	create_qml_config(parent);
+
+		
 }
 
 reception::~reception(){
@@ -28,7 +30,7 @@ void reception::showMenu() {
 	int menuHeight = m_reception->height();
 
 	QPoint globalPos = ui.reception_button->mapToGlobal(
-		QPoint(-(ui.reception_button->width()-8), -menuHeight)
+		QPoint(-199, -menuHeight)
 	);
 	m_reception->move(globalPos);
 	m_reception->show();
@@ -60,7 +62,6 @@ void reception::closeMenu() {
 
 	anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
-
 
 //Config Menu
 void reception::showMenu_config() {
@@ -169,24 +170,26 @@ void reception::on_config_button_clicked() {
 	}
 }
 
-// Widget Helpers
-void reception::update_size() {
-	int reception_island_width = static_cast<int>(width() * 0.3);
-	ui.reception_island->setFixedWidth(reception_island_width);
+void reception::onReservationCreated(QVariant data) {
+	QVariantMap m_data = data.toMap();
+	emit signalReservationCreated(m_data);
 }
 
+// Widget Helpers
 void reception::resizeEvent(QResizeEvent* event) {
-	update_size();
+	int reception_island_width = static_cast<int>(width() * 0.3);
+	ui.reception_island->setFixedWidth(reception_island_width);
 	QWidget::resizeEvent(event);
 }
 
 // QML
-void reception::createQmlWidget(QQuickWidget*& member,
-	const QString& qmlPath,
-	QWidget* container){
+void reception::createQmlWidget(QQuickWidget*& member, const QString& qmlPath
+	, QWidget* container){
 
 	member = new QQuickWidget(this);
 	member->setResizeMode(QQuickWidget::SizeRootObjectToView);
+	member->setAttribute(Qt::WA_TranslucentBackground);
+	member->setClearColor(QColor("#dddbf1"));
 	member->setSource(QUrl(qmlPath));
 
 	QLayout* layout = container->layout();
@@ -197,33 +200,64 @@ void reception::createQmlWidget(QQuickWidget*& member,
 	layout->addWidget(member);
 }
 
-void reception::create_qml_reservations() {
-	createQmlWidget(m_reservations,
-		QStringLiteral("qrc:/qml/reception/reservations.qml"),
-		ui.reception_widget);
-}
-
 void reception::create_qml_tables() {
 	createQmlWidget(m_tables,
 		QStringLiteral("qrc:/qml/reception/tables.qml"),
 		ui.tables_widget);
 }
 
+//reception
 void reception::create_qml_reception(QWidget* parent) {
+	//Build
 	m_overlay = new QWidget(parent);
 	m_overlay->setStyleSheet("background-color: transparent;");
 	m_overlay->hide();
 
 	m_reception = new QQuickWidget(nullptr);
 	m_reception->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+	//Properties
+	m_reception->rootContext()->setContextProperty("r_widget", this);
+
+	connect(m_reception, &QQuickWidget::statusChanged,
+		this, [this](QQuickWidget::Status status) {
+			if (status == QQuickWidget::Ready)
+				r_create_connections();
+		});
+
 	m_reception->setSource(QUrl("qrc:/qml/reception/reception.qml"));
-	m_reception->setFixedSize(200, 300);
+	m_reception->setFixedSize(300, 400);
+
 	m_reception->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
+
 	m_reception->setAttribute(Qt::WA_TranslucentBackground);
+	m_reception->setAttribute(Qt::WA_NoSystemBackground);
+	m_reception->setClearColor(Qt::transparent);
 
 	m_overlay->installEventFilter(this);
 }
 
+void reception::r_create_connections() {
+	QObject* o_reception = m_reception->rootObject();
+	if (!o_reception) return;
+	connect(o_reception, SIGNAL(reservationCreated(QVariant)), this, SLOT(onReservationCreated(QVariant)));
+}
+
+//reservations
+void reception::create_qml_reservations() {
+	createQmlWidget(m_reservations,
+		QStringLiteral("qrc:/qml/reception/reservations.qml"),
+		ui.reception_widget);
+	m_reservations->rootContext()->setContextProperty("r_widget", this);
+}
+
+void reception::reservationCreatedQml(QVariantMap n_data) {
+	QObject* root = m_reservations->rootObject();
+	QMetaObject::invokeMethod(root, "addReservation",
+		Q_ARG(QVariant, QVariant::fromValue(n_data)));
+}
+
+//config
 void reception::create_qml_config(QWidget* parent) {
 	m_overlay_config = new QWidget(parent);
 	m_overlay_config->setStyleSheet("background-color: transparent;");
@@ -232,9 +266,17 @@ void reception::create_qml_config(QWidget* parent) {
 	m_config = new QQuickWidget(nullptr);
 	m_config->setResizeMode(QQuickWidget::SizeRootObjectToView);
 	m_config->setSource(QUrl("qrc:/qml/reception/config.qml"));
-	m_config->setFixedSize(200, 300);
+	m_config->setFixedSize(220, 160);
+
 	m_config->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
+
 	m_config->setAttribute(Qt::WA_TranslucentBackground);
+	m_config->setAttribute(Qt::WA_NoSystemBackground);
+	m_config->setClearColor(Qt::transparent);
 
 	m_overlay_config->installEventFilter(this);
+}
+
+void reception::debug_a() {
+	qDebug() << "DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG";
 }

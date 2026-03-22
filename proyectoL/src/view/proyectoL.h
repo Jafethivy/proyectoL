@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QDialog>
 #include <QCloseEvent>
+#include <QTimer>
 #include "ui_proyectoL.h"
 
 class login;
@@ -19,10 +20,11 @@ public:
     //Helpers
     login* loginWidget() const;
 	reception* receptionWidget() const;
+    
+    void screen_area();
 
+    //StackedWidget
     void set_login();
-
-    //Setter
     void set_area(const QString& area);
 
 signals:
@@ -35,7 +37,6 @@ protected:
 	void closeEvent(QCloseEvent* event) override;
 
 private:
-    void setResizableWindowSize(int w, int h);
 
     Ui::proyectoLClass ui;
 
@@ -44,6 +45,9 @@ private:
 
 	login* loginWindow = nullptr;
 	reception* receptionWindow = nullptr;
+private:
+    int width_screen;
+    int height_screen;
 
 };
 

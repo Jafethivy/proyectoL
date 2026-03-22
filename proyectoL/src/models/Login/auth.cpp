@@ -13,7 +13,7 @@ void Auth::on_login_attempt(const QString& username, const QString& password) {
 		status = true;
 		updateStatusDb(1);
 	} else {
-		status = false;
+		status = true; //cambiar a false luego
 	}
 
 	emit LoginStatus(area, status);

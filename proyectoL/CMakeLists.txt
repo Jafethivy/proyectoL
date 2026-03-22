@@ -57,7 +57,7 @@ endif()
 # BUSCAR PAQUETES
 # ==========================================================
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR}
     COMPONENTS
         Core
@@ -65,6 +65,7 @@ find_package(Qt${QT_VERSION_MAJOR}
         Widgets
         Quick
         QuickWidgets
+        Qml
 )
 qt_standard_project_setup()
 
@@ -216,6 +217,7 @@ target_link_libraries(proyectoL PRIVATE
     Qt::Widgets
     Qt::Quick
     Qt::QuickWidgets
+    Qt::Qml
     ${MYSQL_LIBRARIES}
 )
 

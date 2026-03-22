@@ -10,8 +10,10 @@
 #include <QDebug>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QQmlContext>
 
 #include "reception/ui_reception.h"
+
 class reception : public QWidget
 {
 	Q_OBJECT
@@ -20,24 +22,35 @@ public:
 	reception(QWidget *parent = nullptr);
 	~reception();
 
+	void reservationCreatedQml(QVariantMap n_data);
+
 public slots:
 	void on_end_session_clicked();
 	void on_reception_button_clicked();
 	void on_config_button_clicked();
 
+	void debug_a();
+	void onReservationCreated(QVariant data);
+
 signals:
 	void endSession();
-
+	void signalReservationCreated(QVariantMap m_data);
+	
 private:
-	void update_size();
 	void resizeEvent(QResizeEvent* event) override;
 
 	void createQmlWidget(QQuickWidget*& member,
 		const QString& qmlPath,QWidget* container);
-	void create_qml_reservations();
 	void create_qml_tables();
 
+	//reception
 	void create_qml_reception(QWidget* parent);
+	void r_create_connections();
+
+	//reservations
+	void create_qml_reservations();
+
+	//config
 	void create_qml_config(QWidget* parent);
 
 	void showMenu();

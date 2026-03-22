@@ -35,8 +35,12 @@
     </property>
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
-      <widget class="QWidget" name="page"/>
-      <widget class="QWidget" name="page_2"/>
+      <property name="minimumSize">
+       <size>
+        <width>421</width>
+        <height>481</height>
+       </size>
+      </property>
      </widget>
     </item>
    </layout>

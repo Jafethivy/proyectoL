@@ -74,10 +74,6 @@ void AppContext::setupConnections() {
         m_window, &proyectoL::set_area);
 
 
-	// Reception Window -> Reception Controller
-    QObject::connect(m_receptionWidget, &reception::endSession,
-        m_receptionController, &reception_controller::on_end_session,
-		Qt::AutoConnection);
 	// Reception Controller -> Auth 
     QObject::connect(m_receptionController, &reception_controller::updateSession,
         m_auth, &Auth::updateStatusDb,
@@ -86,7 +82,14 @@ void AppContext::setupConnections() {
     QObject::connect(m_receptionController, &reception_controller::endSession,
         m_window, &proyectoL::set_login,
 		Qt::AutoConnection);
-
+    //Reception Controller -> DB
+    QObject::connect(m_receptionController, &reception_controller::c_reservationCreated,
+        m_db, &DB::createReservation,
+        Qt::AutoConnection);
+    //DB -> Reception Controller
+    QObject::connect(m_db, &DB::n_ReservationCreated,
+        m_receptionController, &reception_controller::createdReservationQml,
+        Qt::AutoConnection);
 
 }
 
