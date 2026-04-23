@@ -5,34 +5,54 @@ import QtQuick.Layouts
 Item {
     id: root
     anchors.fill: parent
+    
+    readonly property int stageDelay:    35
+    readonly property int stageDuration: 200
 
-    // Ahora el Rectangle es hijo, no raíz
-    // Así las esquinas recortadas exponen el Item transparente, no un fondo blanco
+    function getColor(state) {
+        if (state === 0) return "#4CAF50"
+        if (state === 1) return "#FFC107"
+        if (state === 2) return "#F44336"
+        return "#9E9E9E"
+    }
+
+    function getStatusText(state) {
+        if (state === 0) return "Disponible"
+        if (state === 1) return "Reservado"
+        if (state === 2) return "Ocupado"
+        return "Desconocido"
+    }
+
+    ListModel {
+        id: tableModel
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+        ListElement { state: 1 }
+        ListElement { state: 0 }
+        ListElement { state: 2 }
+        ListElement { state: 2 }
+        ListElement { state: 1 }
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+        ListElement { state: 1 }
+        ListElement { state: 0 }
+        ListElement { state: 2 }
+        ListElement { state: 2 }
+        ListElement { state: 1 }
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+        ListElement { state: 0 }
+    }
+
     Rectangle {
         id: background
         anchors.fill: parent
         color: "#293651"
-        radius: 18
+        radius: 8
         clip: true
-
-        property var tableStates: [
-            0, 0, 1, 0, 2, 2, 1, 0, 0, 0,
-            0, 0, 1, 0, 2, 2, 1, 0, 0, 0
-        ]
-
-        function getColor(state) {
-            if (state === 0) return "#4CAF50"
-            if (state === 1) return "#FFC107"
-            if (state === 2) return "#F44336"
-            return "#9E9E9E"
-        }
-
-        function getStatusText(state) {
-            if (state === 0) return "Disponible"
-            if (state === 1) return "Reservado"
-            if (state === 2) return "Ocupado"
-            return "Desconocido"
-        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -41,9 +61,8 @@ Item {
 
             Text {
                 text: "Mesas del Restaurante"
-                font.pixelSize: 24
-                font.bold: true
-                color: "#ffffff"
+                font { pixelSize: 24; family: "Rockwell"; weight: Font.Normal }
+                color: "#DDDBF1"
                 Layout.alignment: Qt.AlignHCenter
             }
 
@@ -54,16 +73,44 @@ Item {
                 columnSpacing: 30
 
                 Repeater {
-                    model: 20
+                    model: tableModel
 
                     Rectangle {
                         id: tableItem
                         width: 60
                         height: 60
                         radius: 35
-                        color: background.getColor(background.tableStates[index])
+                        color: root.getColor(model.state)
                         border.width: 2
                         border.color: "#ffffff"
+                        
+                        opacity: 0
+                        scale: 0.7
+
+                        Timer {
+                            interval: index * root.stageDelay
+                            running: true
+                            repeat: false
+                            onTriggered: entryAnim.start()
+                        }
+
+                        ParallelAnimation {
+                            id: entryAnim
+                            NumberAnimation {
+                                target: tableItem
+                                property: "opacity"
+                                from: 0; to: 1
+                                duration: root.stageDuration
+                                easing.type: Easing.OutBack
+                            }
+                            NumberAnimation {
+                                target: tableItem
+                                property: "scale"
+                                from: 0.7; to: 1.0
+                                duration: root.stageDuration
+                                easing.type: Easing.OutBack
+                            }
+                        }
 
                         Rectangle {
                             anchors.fill: parent
@@ -99,7 +146,7 @@ Item {
                             Text {
                                 id: statusText
                                 anchors.centerIn: parent
-                                text: background.getStatusText(background.tableStates[index])
+                                text: root.getStatusText(model.state)
                                 font.pixelSize: 11
                                 color: "#ffffff"
                             }
@@ -122,13 +169,10 @@ Item {
                                 tableItem.scale = 1.0
                             }
                             onClicked: {
-                                var newStates = background.tableStates.slice()
-                                newStates[index] = (newStates[index] + 1) % 3
-                                background.tableStates = newStates
+                                tableModel.setProperty(index, "state", (model.state + 1) % 3)
                             }
                         }
 
-                        scale: 1.0
                         Behavior on scale {
                             NumberAnimation { duration: 150 }
                         }
@@ -143,21 +187,19 @@ Item {
                 Repeater {
                     model: [
                         { color: "#4CAF50", text: "Disponible" },
-                        { color: "#FFC107", text: "Reservado" },
-                        { color: "#F44336", text: "Ocupado" }
+                        { color: "#FFC107", text: "Reservado"  },
+                        { color: "#F44336", text: "Ocupado"    }
                     ]
 
                     RowLayout {
                         spacing: 6
                         Rectangle {
-                            width: 16
-                            height: 16
-                            radius: 8
+                            width: 16; height: 16; radius: 8
                             color: modelData.color
                         }
                         Text {
                             text: modelData.text
-                            font.pixelSize: 12
+                            font { pixelSize: 12; family: "Rockwell"; weight: Font.Normal }
                             color: "#ffffff"
                         }
                     }

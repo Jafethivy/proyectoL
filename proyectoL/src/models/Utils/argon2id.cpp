@@ -26,23 +26,23 @@ std::string Argon2id::hashPassword(const std::string& password) {
         throw std::runtime_error("Error: memoria insuficiente para hashing");
     }
 
-    // El resultado incluye: algoritmo, versión, memoria, iteraciones, salt, hash
+    // El resultado incluye: algoritmo, version, memoria, iteraciones, salt, hash
     // Ejemplo: $argon2id$v=19$m=65536,t=3,p=4$...
     return std::string(hashed_password);
 }
 
 bool Argon2id::verifyPassword(const std::string& password, const std::string& hash) {
-    // crypto_pwhash_str_verify extrae automáticamente los parámetros del hash
+    // crypto_pwhash_str_verify extrae automaticamente los parametros del hash
     int result = crypto_pwhash_str_verify(
         hash.c_str(),
         password.c_str(),
         password.length()
     );
 
-    // Seguridad adicional: limpiar password de memoria después de usar
+    // Seguridad adicional: limpiar password de memoria despues de usar
     sodium_memzero(const_cast<char*>(password.c_str()), password.length());
 
-    return result == 0; // 0 = éxito, -1 = fallo
+    return result == 0; // 0 = exito, -1 = fallo
 }
 
 bool Argon2id::needsRehash(const std::string& hash) {
@@ -50,5 +50,5 @@ bool Argon2id::needsRehash(const std::string& hash) {
         hash.c_str(),
         crypto_pwhash_OPSLIMIT_INTERACTIVE,
         crypto_pwhash_MEMLIMIT_INTERACTIVE
-    ) == 1; // 1 = necesita rehash, 0 = está actualizado
+    ) == 1; // 1 = necesita rehash, 0 = esta actualizado
 }

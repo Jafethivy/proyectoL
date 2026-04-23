@@ -27,6 +27,8 @@ public:
     // Inicializa todo y retorna la ventana principal
 	proyectoL* initialize();
 
+    void Demand(int area);
+
 private:
     void createObjects();
     void setupThreads();
@@ -34,6 +36,8 @@ private:
     void cleanup();
 	void debugConnections();
 
+    void demandReception();
+private:
     // Hilo del modelo
     QThread WorkerThread;
     
@@ -51,5 +55,4 @@ private:
 
     Auth* m_auth = nullptr;
 	DB* m_db = nullptr;
-    ModelFactory* m_modelFactory = nullptr;
 };

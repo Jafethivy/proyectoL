@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Error de inicio de sesión</string>
+   <string>Error de inicio de sesion</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #ab9f9d;</string>

@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>qml/reception/reservations.qml</file>
-        <file>qml/reception/reception.qml</file>
-        <file>qml/reception/config.qml</file>
-        <file>qml/reception/tables.qml</file>
-    </qresource>
-</RCC>

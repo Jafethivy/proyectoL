@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QString>
 #include <string>
+#include <charconv>
 #include "models/utils/argon2id.h"
 #include "models/utils/db.h"
 
@@ -26,7 +27,7 @@ public slots:
 	void on_login_attempt(const QString& username, const QString& password);
 
 signals:
-	void LoginStatus(const QString& area, const int& status);
+	void LoginStatus(const int& area, const int& status);
 	void endSession_success();
 
 private:
@@ -36,6 +37,7 @@ private:
 	std::string pwd_hash_db;
 
 	std::string username_local;
-	QString area;
+	int area;
+
 	bool status = false;
 };

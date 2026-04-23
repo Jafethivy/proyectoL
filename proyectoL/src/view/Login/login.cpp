@@ -17,7 +17,7 @@ void login::on_login_b_clicked() {
 	emit LoginAttempt(username, password);
 }
 
-void login::Status(const QString& area, const bool& status) {
+void login::Status(const int& area, const bool& status) {
 	if (status) {
 		emit LoginSuccess(area);
 	}

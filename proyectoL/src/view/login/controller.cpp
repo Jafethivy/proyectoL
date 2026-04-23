@@ -12,7 +12,7 @@ void Controller::on_login_attempt(const QString& username, const QString& passwo
 	emit LoginAttempt(username, password);
 }
 
-void Controller::on_login_status(const QString& area, const bool& status) {
+void Controller::on_login_status(const int& area, const bool& status) {
 	emit LoginStatus(area, status);
 }
 

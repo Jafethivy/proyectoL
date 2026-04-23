@@ -17,7 +17,7 @@ public:
 
 	void setMainWindow(QMainWindow* mainWindow);
 
-	void Status(const QString& area, const bool& status);
+	void Status(const int& area, const bool& status);
 	void ShowLoginError();
 
 public slots:
@@ -25,7 +25,7 @@ public slots:
 
 signals:
 	void LoginAttempt(const QString& username, const QString& password);
-	void LoginSuccess(const QString& area);
+	void LoginSuccess(const int& area);
 
 
 private:

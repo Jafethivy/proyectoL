@@ -1,97 +1,131 @@
+﻿import QtQuick.Controls.Basic
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "generalComponents"
 
 Rectangle {
     id: root
-    width: 220
-    height: 380
-    color: "#2d2d2d"
-    radius: 8
-    border.color: "#404040"
-    border.width: 1
+    width: 300
+    height: 440
+    color: clr.bgRoot
+    topLeftRadius: 10
+    topRightRadius: 10
+    border.color: clr.borderDefault
+    border.width: 2
+
+    readonly property var clr: QtObject {
+        readonly property color bgRoot:            "#3E527A"
+        readonly property color bgDivider:         "#DDDBF1"
+        readonly property color bgHeader:          "#293651"
+        readonly property color bgField:           "#2A2F3C"
+        readonly property color mnPlaceholder:     "#2A2F3C"
+        readonly property color btnPrimaryNormal:  "#E3E2F3"
+        readonly property color btnPrimaryHover:   "#B9B6E2"
+        readonly property color btnPrimaryBorder:  "#C7C4E8"
+        readonly property color btnPrimaryText:    "#383F51"
+        readonly property color btnActionNormal:   "#6E605E"
+        readonly property color btnActionHover:    "#847371"
+        readonly property color btnSecondaryNormal:"#6E605E"
+        readonly property color btnSecondaryHover: "#847371"
+        readonly property color btnDisabled:       "#333333"
+        readonly property color btnActionBorder:   "#555555"
+        readonly property color borderDefault:     "#A48265"
+        readonly property color borderFocus:       "#666666"
+        readonly property color borderValid:       "#2ecc71"
+        readonly property color borderError:       "#e74c3c"
+        readonly property color textWhite:         "white"
+        readonly property color textMuted:         "#DDDBF1"
+        readonly property color textPlaceholder:   "#666666"
+        readonly property color textError:         "#e74c3c"
+    }
 
     property int currentView: 0
 
     signal reservationCreated(var data)
     signal reservationEdited(var data)
+    signal closeRequested()
 
     StackLayout {
         anchors.fill: parent
         currentIndex: root.currentView
 
-        // Vista 0: Menu principal
+        //  Vista 0: Menu principal 
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: 10
             spacing: 12
 
             Text {
                 text: "Reservaciones"
-                color: "white"
-                font.bold: true
-                font.pixelSize: 14
-                Layout.topMargin: 10
+                color: clr.textWhite
+                font { pixelSize: 20; family: "Rockwell"; weight: Font.Normal }
+                Layout.topMargin: 20
                 Layout.alignment: Qt.AlignHCenter
             }
 
             Rectangle {
                 Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
                 height: 1
-                color: "#404040"
+                color: clr.bgDivider
             }
 
             Item { Layout.fillHeight: true }
 
             ItemDelegate {
                 Layout.fillWidth: true
-                height: 48
-
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                Layout.alignment: Qt.AlignHCenter
+                height: 20
                 contentItem: Text {
-                    text: "Crear Reservacion"
-                    color: "white"
+                    text: "Crear Reservaci\u00F3n"
+                    color: clr.btnPrimaryText
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: 14
+                    font { pixelSize: 16; family: "Rockwell"; weight: Font.Normal }
                 }
-
                 background: Rectangle {
-                    color: parent.hovered ? "#555555" : "#444444"
+                    color: parent.hovered ? clr.btnPrimaryHover : clr.btnPrimaryNormal
                     radius: 10
-                    border.color: "#666666"
+                    border.color: clr.btnPrimaryBorder
                     border.width: 1
                 }
-
                 onClicked: root.currentView = 1
             }
 
             ItemDelegate {
                 Layout.fillWidth: true
-                height: 48
-
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                Layout.alignment: Qt.AlignHCenter
+                height: 20
                 contentItem: Text {
-                    text: "Editar Reservacion"
-                    color: "white"
+                    text: "Editar Reservaci\u00F3n"
+                    color: clr.btnPrimaryText
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: 14
+                    font { pixelSize: 16; family: "Rockwell"; weight: Font.Normal }
                 }
-
                 background: Rectangle {
-                    color: parent.hovered ? "#404040" : "#2d2d2d"
+                    color: parent.hovered ? clr.btnPrimaryHover : clr.btnPrimaryNormal
                     radius: 10
-                    border.color: "#555555"
+                    border.color: clr.btnPrimaryBorder
                     border.width: 1
                 }
-
                 onClicked: root.currentView = 2
             }
 
             Item { Layout.fillHeight: true }
+            CloseButton{
+                Layout.bottomMargin: 4
+                onClicked: root.closeRequested()
+            }
         }
 
-        // Vista 1: Crear reservacion
+        //  Vista 1: Crear reservacion 
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -99,19 +133,21 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
-                height: 42
-                color: "#1e1e1e"
-
+                Layout.topMargin: 8
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+                height: 40
+                color: clr.bgHeader
+                radius: 10
                 Text {
                     anchors.fill: parent
                     anchors.leftMargin: 10
-                    text: "Crear Reservacion"
-                    color: "#aaaaaa"
-                    font.pixelSize: 14
+                    text: "Crear Reservaci\u00F3n"
+                    color: clr.textMuted
+                    font { pixelSize: 14; family: "Rockwell"; weight: Font.Normal }
                     font.bold: true
                     verticalAlignment: Text.AlignVCenter
                 }
-
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -140,18 +176,16 @@ Rectangle {
                     label: "Fecha"
                     placeholder: "YYYY-MM-DD"
                     errorMsg: "Formato requerido: YYYY-MM-DD"
-                    validatorObj: RegularExpressionValidator {
-                        regularExpression: /^\d{4}-\d{2}-\d{2}$/
-                    }
+                    formatMode: "date"
+                    maskPattern: "^\\d{4}-\\d{2}-\\d{2}$"
                 }
                 MenuField {
                     id: createTime
                     label: "Hora"
-                    placeholder: "HH-MM-SS"
-                    errorMsg: "Hora invalida: HH(0-23)-MM(0-59)-SS(0-59)"
-                    validatorObj: RegularExpressionValidator {
-                        regularExpression: /^(0[0-9]|1[0-9]|2[0-3])-(0[0-9]|[1-5][0-9])-(0[0-9]|[1-5][0-9])$/
-                    }
+                    placeholder: "HH:MM"
+                    errorMsg: "Hora invalida: HH(0-23):MM(0-59)"
+                    formatMode: "time"
+                    maskPattern: "^(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])$"
                 }
                 MenuField {
                     id: createGuests
@@ -169,10 +203,11 @@ Rectangle {
                     enabled: createName.isValid && createDate.isValid && createTime.isValid && createGuests.isValid
                     onAction: {
                         var data = {
-                            name_resv:   createName.value,
-                            date_resv:   createDate.value,
-                            time_resv:   createTime.value,
-                            guest_resv: parseInt(createGuests.value) || 0
+                            name_resv:  createName.value,
+                            date_resv:  createDate.value,
+                            time_resv:  createTime.value,
+                            guest_resv: parseInt(createGuests.value) || 0,
+                            status_resv: 0
                         }
                         reservationCreated(data)
                         createName.clear(); createDate.clear()
@@ -180,7 +215,6 @@ Rectangle {
                         root.currentView = 0
                     }
                 }
-
                 MenuButton {
                     Layout.fillWidth: true
                     label: "Volver"
@@ -194,9 +228,13 @@ Rectangle {
             }
 
             Item { Layout.fillHeight: true }
+            CloseButton{
+                Layout.bottomMargin: 4
+                onClicked: root.closeRequested()
+            }
         }
 
-        // Vista 2: Editar reservacion
+        //  Vista 2: Editar reservacion 
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -204,19 +242,21 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
+                Layout.topMargin: 8
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
                 height: 42
-                color: "#1e1e1e"
-
+                color: clr.bgHeader
+                radius: 10
                 Text {
                     anchors.fill: parent
                     anchors.leftMargin: 10
-                    text: "Editar Reservacion"
-                    color: "#aaaaaa"
-                    font.pixelSize: 14
+                    text: "Editar Reservaci\u00F3n"
+                    color: clr.textMuted
+                    font { pixelSize: 14; family: "Rockwell"; weight: Font.Normal }
                     font.bold: true
                     verticalAlignment: Text.AlignVCenter
                 }
-
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -255,19 +295,17 @@ Rectangle {
                     placeholder: "YYYY-MM-DD (opcional)"
                     errorMsg: "Formato requerido: YYYY-MM-DD"
                     required: false
-                    validatorObj: RegularExpressionValidator {
-                        regularExpression: /^\d{4}-\d{2}-\d{2}$/
-                    }
+                    formatMode: "date"
+                    maskPattern: "^\\d{4}-\\d{2}-\\d{2}$"
                 }
                 MenuField {
                     id: editTime
                     label: "Hora"
-                    placeholder: "HH-MM-SS (opcional)"
-                    errorMsg: "Hora invalida: HH(0-23)-MM(0-59)-SS(0-59)"
+                    placeholder: "HH:MM (opcional)"
+                    errorMsg: "Hora invalida: HH(0-23):MM(0-59)"
                     required: false
-                    validatorObj: RegularExpressionValidator {
-                        regularExpression: /^(0[0-9]|1[0-9]|2[0-3])-(0[0-9]|[1-5][0-9])-(0[0-9]|[1-5][0-9])$/
-                    }
+                    formatMode: "time"
+                    maskPattern: "^(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])$"
                 }
                 MenuField {
                     id: editGuests
@@ -284,11 +322,12 @@ Rectangle {
                     enabled: editId.isValid && editName.isValid && editDate.isValid && editTime.isValid && editGuests.isValid
                     onAction: {
                         var data = {
-                            id_resv:     parseInt(editId.value) || 0,
-                            name_resv:   editName.value,
-                            date_resv:   editDate.value,
-                            time_resv:   editTime.value,
-                            guest_resv: parseInt(editGuests.value) || 0
+                            id_resv:    parseInt(editId.value) || 0,
+                            name_resv:  editName.value,
+                            date_resv:  editDate.value,
+                            time_resv:  editTime.value,
+                            guest_resv: parseInt(editGuests.value) || 0,
+                            status_resv: 0
                         }
                         reservationEdited(data)
                         editId.clear(); editName.clear(); editDate.clear()
@@ -296,7 +335,6 @@ Rectangle {
                         root.currentView = 0
                     }
                 }
-
                 MenuButton {
                     Layout.fillWidth: true
                     label: "Volver"
@@ -310,94 +348,161 @@ Rectangle {
             }
 
             Item { Layout.fillHeight: true }
-        }
-    }
 
-    component MenuField: ColumnLayout {
-    property string label: ""
-    property string placeholder: ""
-    property string errorMsg: ""
-    property int    maxLength: 32767
-    property alias  value: tf.text
-    property alias  validatorObj: tf.validator
-    property bool   required: true
-    readonly property bool isValid: required ? tf.acceptableInput : (tf.text.length === 0 || tf.acceptableInput)
-    spacing: 2
-    Layout.fillWidth: true
-
-    property bool touched: false
-
-    function clear() {
-        tf.text = ""
-        touched = false
-    }
-
-    Text {
-        text: label
-        color: "#aaaaaa"
-        font.pixelSize: 14
-    }
-
-    TextField {
-        id: tf
-        Layout.fillWidth: true
-        height: 32
-        placeholderText: placeholder
-        placeholderTextColor: "#666666"
-        color: "white"
-        font.pixelSize: 14
-        leftPadding: 8
-        maximumLength: maxLength
-
-        onActiveFocusChanged: {
-            if (!activeFocus && text.length > 0)
-                touched = true
-        }
-
-        background: Rectangle {
-            color: "#1e1e1e"
-            radius: 4
-            border.width: 1
-            border.color: {
-                if (tf.activeFocus)                                return "#666666"
-                if (touched && !tf.acceptableInput)               return "#e74c3c"
-                if (touched && tf.acceptableInput)                return "#2ecc71"
-                return "#404040"
+            CloseButton{
+                Layout.bottomMargin: 4
+                onClicked: root.closeRequested()
             }
         }
     }
 
-    Text {
-        visible: touched && !tf.acceptableInput
-        text: errorMsg
-        color: "#e74c3c"
-        font.pixelSize: 10
-        wrapMode: Text.WordWrap
+    //  Componentes internos 
+
+    component MenuField: ColumnLayout {
+        property string label:       ""
+        property string placeholder: ""
+        property string errorMsg:    ""
+        property int    maxLength:   32767
+        property alias  value:       tf.text
+        property alias  validatorObj: tf.validator
+        property bool   required:    true
+        
+        property string formatMode:  ""
+        property string maskPattern: ""
+
+        readonly property bool isValid: {
+            if (formatMode !== "" && maskPattern !== "") {
+                var re = new RegExp(maskPattern)
+                return required ? re.test(tf.text)
+                                : (tf.text.length === 0 || re.test(tf.text))
+            }
+            return required ? tf.acceptableInput
+                            : (tf.text.length === 0 || tf.acceptableInput)
+        }
+
+        spacing: 2
         Layout.fillWidth: true
+
+        property bool _busy:    false
+        property int  _prevLen: 0
+        property bool touched:  false
+
+        function _applyFormat(raw) {
+            var d = raw.replace(/\D/g, "")
+            if (formatMode === "time") {
+                d = d.substring(0, 4)
+                return d.length > 2 ? d.substring(0, 2) + ":" + d.substring(2) : d
+            }
+            if (formatMode === "date") {
+                d = d.substring(0, 8)
+                if      (d.length > 6) return d.substring(0,4) + "-" + d.substring(4,6) + "-" + d.substring(6)
+                else if (d.length > 4) return d.substring(0,4) + "-" + d.substring(4)
+                else                   return d
+            }
+            return raw
+        }
+
+        function clear() {
+            tf.text  = ""
+            _prevLen = 0
+            touched  = false
+        }
+
+        Text {
+            text: label
+            color: clr.textMuted
+            font { pixelSize: 14; family: "Rockwell"; weight: Font.Normal }
+        }
+
+        TextField {
+            id: tf
+            Layout.fillWidth: true
+            height: 32
+            placeholderText: placeholder
+            placeholderTextColor: clr.textPlaceholder
+            color: clr.textWhite
+            font { pixelSize: 14; family: "Rockwell"; weight: Font.Normal }
+            leftPadding: 8
+            // formatMode ya no colisiona con ninguna propiedad de TextField
+            maximumLength: formatMode === "time" ? 5
+                         : formatMode === "date" ? 10
+                         : maxLength
+
+            onActiveFocusChanged: {
+                if (!activeFocus && tf.text.length > 0)
+                    touched = true
+            }
+
+            onTextEdited: {
+                if (formatMode === "" || _busy) return
+                _busy = true
+
+                var deleting = tf.text.length < _prevLen
+
+                if (!deleting) {
+                    var formatted = _applyFormat(tf.text)
+                    if (tf.text !== formatted) {
+                        tf.text = formatted
+                        tf.cursorPosition = formatted.length
+                    }
+                } else {
+                    // Borrado: eliminar guion colgante para no quedar atascado
+                    var t = tf.text
+                    if (t.length > 0 && t[t.length - 1] === ":") {
+                        t = t.slice(0, -1)
+                        tf.text = t
+                        tf.cursorPosition = t.length
+                    }
+                }
+
+                _prevLen = tf.text.length
+                _busy    = false
+            }
+
+            background: Rectangle {
+                color: clr.bgField
+                radius: 4
+                border.width: 1
+                border.color: {
+                    if (tf.activeFocus)          return clr.borderFocus
+                    if (touched && !isValid)     return clr.borderError
+                    if (touched &&  isValid)     return clr.borderValid
+                    return clr.borderDefault
+                }
+            }
+        }
+
+        Text {
+            visible: touched && !isValid
+            text: errorMsg
+            color: clr.textError
+            font.pixelSize: 10
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+        }
     }
-}
 
     component MenuButton: Rectangle {
-        property string label: ""
+        property string label:     ""
         property bool   secondary: false
         signal action()
 
         height: 32
         radius: 4
         color: !enabled
-               ? "#333333"                                                         // COLOR: boton deshabilitado
+               ? clr.btnDisabled
                : secondary
-                 ? (btnArea.containsMouse ? "#404040" : "#2d2d2d")                // COLOR: boton secundario (hover : normal)
-                 : (btnArea.containsMouse ? "#555555" : "#444444")                // COLOR: boton primario   (hover : normal)
-        border.color: "#555555"
+                 ? (btnArea.containsMouse ? clr.btnSecondaryHover  : clr.btnSecondaryNormal)
+                 : (btnArea.containsMouse ? clr.btnActionHover     : clr.btnActionNormal)
+        border.color: clr.btnActionBorder
         border.width: secondary ? 1 : 0
         opacity: enabled ? 1.0 : 0.4
 
         Text {
             anchors.centerIn: parent
             text: label
-            color: "white"
-            font.pixelSize: 14
+            color: clr.textWhite
+            font { pixelSize: 14; family: "Rockwell"; weight: Font.Normal }
             font.bold: !secondary
         }
 

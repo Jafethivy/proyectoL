@@ -17,17 +17,28 @@ public:
 	explicit DB(QObject* parent = nullptr);
 	void debug();
 
-	QVector<std::string> get_user_info(std::string& username);
+	QVariantMap get_user_info(std::string& username);
 	void updateStatusDb(const std::string& username, const int& status);
 
 	//reception
-	void createReservation(QVariantMap m_data);
+	void initReservations();
 
+	void createReservation(QVariantMap m_data);
+	void editReservation(QVariantMap m_data);
+	void removeReservation(QVariant index);
+
+	void advancedQuery(QVariantMap n_data);
 public slots:
 	Session* connectToDatabase();
 
 signals:
+	void reservationsGetter(QVariantList reservations);
+
 	void n_ReservationCreated(QVariantMap n_data);
+	void n_ReservationEdited(QVariantMap n_data);
+
+	void reservationAdvanced(QVariantList reservations);
+
 protected:
 	bool status;
 private:

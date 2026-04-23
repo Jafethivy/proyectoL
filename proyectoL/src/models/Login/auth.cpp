@@ -11,22 +11,23 @@ void Auth::on_login_attempt(const QString& username, const QString& password) {
 
 	if (verifyPasswordAuth(password.toStdString(), pwd_hash_db)) {
 		status = true;
-		updateStatusDb(1);
+		//updateStatusDb(1);
 	} else {
-		status = true; //cambiar a false luego
+		status = false;
 	}
 
 	emit LoginStatus(area, status);
 }
 
 void Auth::get_db_info(std::string& username) {
-	QVector<std::string> data = m_db->get_user_info(username);
+	QVariantMap data = m_db->get_user_info(username);
 
 	if (data.isEmpty()) {
 		return;
 	}
-	pwd_hash_db = data[0];
-	area = QString::fromStdString(data[1]);
+
+	pwd_hash_db = data["pwd_hash_db"].toString().toStdString();
+	area = data["area"].toInt();
 }
 
 bool Auth::verifyPasswordAuth(const std::string& pwd_hash_local, const std::string& pwd_hash_db) {

@@ -79,20 +79,20 @@ if(WIN32)
         "${MYSQL_CONNECTOR_PATH}/include"
     )
     
-    # Carpeta de librerías (con subcarpeta vs14)
+    # Carpeta de librerias (con subcarpeta vs14)
     set(MYSQL_LIB_DIR "${MYSQL_CONNECTOR_PATH}/lib64/debug/vs14")
     
     # Verificar que existe la carpeta vs14
     if(NOT EXISTS ${MYSQL_LIB_DIR})
-        message(FATAL_ERROR "No se encontró la carpeta vs14 en ${MYSQL_CONNECTOR_PATH}/lib64/debug")
+        message(FATAL_ERROR "No se encontro la carpeta vs14 en ${MYSQL_CONNECTOR_PATH}/lib64/debug")
     endif()
     
-    # Usar siempre librerías Debug compiladas
-    # Nombres exactos según la imagen que mostraste
+    # Usar siempre librerias Debug compiladas
+    # Nombres exactos segun la imagen que mostraste
     set(MYSQL_CONN_LIB "${MYSQL_LIB_DIR}/mysqlcppconn.lib")
     set(MYSQL_CONNX_LIB "${MYSQL_LIB_DIR}/mysqlcppconnx.lib")
     
-    message(STATUS "Usando librerías MySQL Release para todas las configuraciones")
+    message(STATUS "Usando librerias MySQL Release para todas las configuraciones")
     message(STATUS "MySQL Connector Path: ${MYSQL_CONNECTOR_PATH}")
     message(STATUS "MySQL Lib Dir: ${MYSQL_LIB_DIR}")
     
@@ -103,17 +103,17 @@ if(WIN32)
         list(APPEND MYSQL_LIBRARIES ${MYSQL_CONN_LIB})
         message(STATUS "MySQL library found: ${MYSQL_CONN_LIB}")
     else()
-        message(FATAL_ERROR "Librería de MySQL no encontrada: ${MYSQL_CONN_LIB}")
+        message(FATAL_ERROR "Libreria de MySQL no encontrada: ${MYSQL_CONN_LIB}")
     endif()
     
     if(EXISTS ${MYSQL_CONNX_LIB})
         list(APPEND MYSQL_LIBRARIES ${MYSQL_CONNX_LIB})
         message(STATUS "MySQL library found: ${MYSQL_CONNX_LIB}")
     else()
-        message(FATAL_ERROR "Librería de MySQL no encontrada: ${MYSQL_CONNX_LIB}")
+        message(FATAL_ERROR "Libreria de MySQL no encontrada: ${MYSQL_CONNX_LIB}")
     endif()
     
-    # Carpeta de DLLs (están en lib64, no en vs14)
+    # Carpeta de DLLs (estan en lib64, no en vs14)
     set(MYSQL_DLL_DIR "${MYSQL_CONNECTOR_PATH}/lib64")
     
     message(STATUS "MySQL DLL Dir: ${MYSQL_DLL_DIR}")
@@ -131,19 +131,16 @@ set(MODELS_UTILS
 )
 
 set (MODELS
-    src/models/modelsfactory.h
-    src/models/modelsfactory.cpp
-
     src/models/Login/auth.h
     src/models/Login/auth.cpp
 )
 
 set (CONTROLLERS
-    src/controllers/LoginController/controller.h
-    src/controllers/LoginController/controller.cpp
+    src/view/login/controller.h
+    src/view/login/controller.cpp
 
-    src/controllers/ReceptionController/reception_controller.h
-    src/controllers/ReceptionController/reception_controller.cpp
+    src/view/reception/reception_controller.h
+    src/view/reception/reception_controller.cpp
 )
 
 set (VIEW_SOURCES
@@ -164,23 +161,6 @@ set (VIEW_SOURCES
     gui/reception/reception.ui
     src/view/reception/reception.h
     src/view/reception/reception.cpp
-
-)
-
-set (QRC_FILES
-    resources.qrc
-)
-
-set (QML_FILES
-    qml/reception/reservations.qml
-    qml/reception/reception.qml
-    qml/reception/config.qml
-    qml/reception/tables.qml
-)
-
-set (QML_LOGIC
-    src/models/reception/reservations/Reservations.h
-    src/models/reception/reservations/Reservations.cpp
 )
 
 set (SOURCE_INIT
@@ -195,8 +175,6 @@ set(PROJECT_SOURCES
     ${MODELS}
     ${CONTROLLERS}
     ${VIEW_SOURCES}
-    ${QRC_FILES}
-    ${QML_LOGIC}
     ${SOURCE_INIT}
 )
 
@@ -207,6 +185,39 @@ if(WIN32)
     )
 endif()
 
+# ==========================================================
+# MODULO QML (Reemplaza al .qrc para archivos QML)
+# ==========================================================
+
+qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0001 NEW)
+
+qt_add_qml_module(proyectoL
+    URI ProyectoL
+    VERSION 1.0
+    
+    QML_FILES
+        qml/reception/reservations.qml
+        qml/reception/reception.qml
+        qml/reception/config.qml
+        qml/reception/tables.qml
+        qml/reception/filterPanel.qml
+
+        qml/reception/filterComponents/SectionLabel.qml
+        qml/reception/filterComponents/ToggleFilterButton.qml
+        qml/reception/filterComponents/TimeRangeField.qml
+        qml/reception/filterComponents/DateRangeField.qml
+        qml/reception/filterComponents/StyledSpinBox.qml
+        qml/reception/filterComponents/MiniToggle.qml
+        
+        qml/reception/generalComponents/CloseButton.qml
+)
+
+    
+    # Si tienes imagenes, fonts o JSON en resources.qrc, muevelos aqui:
+    # RESOURCES
+    #     images/logo.png
+    #     fonts/roboto.ttf
 # ==========================================================
 # ENLAZAR LIBRERÍAS (QT + MYSQL)
 # ==========================================================
@@ -252,7 +263,7 @@ if(WIN32)
     # WINDOWS - libsodium pre-compilado
     # =========================================================
     
-    # Ruta de libsodium (ajústala según tu instalación)
+    # Ruta de libsodium (ajustala segun tu instalacion)
     set(SODIUM_ROOT "D:/vcpkg/installed/x64-windows" CACHE PATH "Ruta de libsodium")
     
     # Buscar headers
@@ -262,7 +273,7 @@ if(WIN32)
         REQUIRED
     )
     
-    # Buscar librería (Release por defecto, Debug si está configurado)
+    # Buscar libreria (Release por defecto, Debug si esta configurado)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         find_library(SODIUM_LIBRARY 
             NAMES libsodium 
@@ -279,14 +290,14 @@ if(WIN32)
         set(SODIUM_DLL_PATH "${SODIUM_ROOT}/x64/Release/v143/libsodium.dll")
     endif()
     
-    # Aplicar configuración
+    # Aplicar configuracion
     target_include_directories(${PROJECT_NAME} PRIVATE ${SODIUM_INCLUDE_DIR})
     target_link_libraries(${PROJECT_NAME} PRIVATE ${SODIUM_LIBRARY})
     
-    # Definición para librería estática (opcional)
+    # Definicion para libreria estatica (opcional)
     # target_compile_definitions(${PROJECT_NAME} PRIVATE SODIUM_STATIC)
     
-    # Copiar DLL automáticamente (solo si es dinámica)
+    # Copiar DLL automaticamente (solo si es dinamica)
     if(EXISTS ${SODIUM_DLL_PATH})
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -336,8 +347,8 @@ if(WIN32)
     # DESPLIEGUE DE DLLs DE MYSQL CONNECTOR
     # ==========================================================
     
-    # Las DLLs están en lib64 (no en vs14)
-    # Nombres según tu descripción anterior
+    # Las DLLs estan en lib64 (no en vs14)
+    # Nombres segun tu descripcion anterior
     set(MYSQL_DLLS
         "${MYSQL_DLL_DIR}/debug/mysqlcppconn-10-vs14.dll"
         "${MYSQL_DLL_DIR}/debug/mysqlcppconnx-2-vs14.dll"
